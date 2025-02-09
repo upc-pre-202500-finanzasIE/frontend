@@ -1,35 +1,52 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { Fragment, useEffect, useState } from "react";
+import Main from "./main/Main";
+import { Route, Routes } from "react-router-dom";
+import LeftSidebar from "./public/pages/LeftSidebar.tsx";
+import Wallet from "./wallets/pages/Wallet.tsx";
+import SignIn from "./authentication/SingIn.tsx";
 
-function App() {
-  const [count, setCount] = useState(0)
+const App = () => {
+    const [isLeftSidebarCollapsed, setIsLeftSidebarCollapsed] =
+        useState<boolean>(false);
+    const [screenWidth, setScreenWidth] = useState<number>(window.innerWidth);
 
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Hola Mundo</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+    useEffect(() => {
+        const updateSize = () => {
+            setScreenWidth(window.innerWidth);
+            if (window.innerWidth < 768) {
+                setIsLeftSidebarCollapsed(true);
+            }
+        };
+        window.addEventListener("resize", updateSize);
+        updateSize();
+        return () => window.removeEventListener("resize", updateSize);
+    }, []);
 
-export default App
+    return (
+        <Fragment>
+            <LeftSidebar
+                isLeftSidebarCollapsed={isLeftSidebarCollapsed}
+                changeIsLeftSidebarCollapsed={(value) =>
+                    setIsLeftSidebarCollapsed(value)
+                }
+            />
+            <Routes>
+                <Route
+                    element={
+                        <Main
+                            screenWidth={screenWidth}
+                            isLeftSidebarCollapsed={isLeftSidebarCollapsed}
+                        />
+                    }
+                >
+                    <Route path="" element={<SignIn />} />
+                    <Route path="/wallets" element={<Wallet />} />
+                    <Route path="/sign-in" element={< SignIn/>} />
+
+                </Route>
+            </Routes>
+        </Fragment>
+    );
+};
+
+export default App;

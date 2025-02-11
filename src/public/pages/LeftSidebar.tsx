@@ -15,7 +15,7 @@ const LeftSidebar = ({
                      }: LeftSidebarProps) => {
     const items = [
         {
-            routerLink: "",
+            routerLink: "wallets",
             icon: <FaApple />,
             label: "Wallets",
         },

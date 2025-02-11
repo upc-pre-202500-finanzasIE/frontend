@@ -40,7 +40,7 @@ const App = () => {
                     }
                 >
                     <Route path="" element={<SignIn />} />
-                    <Route path="/wallets" element={<Wallet />} />
+                    <Route path="/wallets" element={<Wallet/>} />
                     <Route path="/sign-in" element={< SignIn/>} />
 
                 </Route>

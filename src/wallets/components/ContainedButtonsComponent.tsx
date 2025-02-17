@@ -6,10 +6,18 @@ import EditIcon from '@material-ui/icons/Edit';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { saveWallet } from '../services/WalletService';
+import {deleteWalletById, getWalletById, saveWallet} from '../services/WalletService';
+import ConfirmDeleteModal from "./ConfirmDeleteModal.tsx";
 
-const ContainedButtons: React.FC<{ classWallet: string }> = ({ classWallet }) => {
+const ContainedButtons: React.FC<{
+    classWallet: string;
+    isItemSelected: boolean;
+    selectedWalletId: string | null;
+    refreshData: () => void;
+}> = ({ classWallet, isItemSelected, selectedWalletId, refreshData }) => {
     const [open, setOpen] = useState(false);
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [walletNameToDelete, setWalletNameToDelete] = useState('');
     const [numLetters, setNumLetters] = useState(1);
     const [startDates, setStartDates] = useState<string[]>(['']);
     const [endDates, setEndDates] = useState<string[]>(['']);
@@ -23,9 +31,8 @@ const ContainedButtons: React.FC<{ classWallet: string }> = ({ classWallet }) =>
     const [cliente, setCliente] = useState('');
     const [isFormValid, setIsFormValid] = useState(false);
 
-    useEffect(() => {
-        validateForm();
-    }, [nombre, cliente, numLetters, startDates, endDates, montos, teas, currency, rateType, ratePeriod]);
+
+
 
     const validateForm = () => {
         const isValid = Boolean(
@@ -64,6 +71,7 @@ const ContainedButtons: React.FC<{ classWallet: string }> = ({ classWallet }) =>
         setErrors(Array(num).fill(''));
     };
 
+
     const handleStartDateChange = (index: number) => (event: React.ChangeEvent<HTMLInputElement>) => {
         const newStartDates = [...startDates];
         newStartDates[index] = event.target.value;
@@ -83,7 +91,36 @@ const ContainedButtons: React.FC<{ classWallet: string }> = ({ classWallet }) =>
         newMontos[index] = event.target.value.replace(/[^0-9.]/g, '');
         setMontos(newMontos);
     };
+    const handleDelete = async () => {
+        if (!selectedWalletId) return;
 
+        try {
+            const wallet = await getWalletById(selectedWalletId);
+            setWalletNameToDelete(wallet.nombre);
+            setIsDeleteModalOpen(true);
+        } catch (error) {
+            console.error('Error obteniendo la cartera:', error);
+            toast.error('Error al obtener la cartera para eliminar');
+        }
+    };
+
+    const handleConfirmDelete = async () => {
+        if (!selectedWalletId) return;
+
+        try {
+            await deleteWalletById(selectedWalletId);
+            toast.success('Cartera eliminada exitosamente', { position: 'top-right' });
+            refreshData();
+            setIsDeleteModalOpen(false);
+        } catch (error) {
+            console.error('Error eliminando cartera:', error);
+            toast.error('Error al eliminar la cartera');
+        }
+    };
+
+    const handleCloseDeleteModal = () => {
+        setIsDeleteModalOpen(false);
+    };
     const handleTeaChange = (index: number) => (event: React.ChangeEvent<HTMLInputElement>) => {
         const newTeas = [...teas];
         newTeas[index] = event.target.value.replace(/[^0-9.]/g, '');
@@ -119,7 +156,10 @@ const ContainedButtons: React.FC<{ classWallet: string }> = ({ classWallet }) =>
     };
 
     const handleSave = async () => {
+
+
         const letras = startDates.map((startDate, index) => ({
+            idTasa: (index + 1).toString(),
             startDate,
             endDate: endDates[index],
             monto: montos[index],
@@ -128,22 +168,34 @@ const ContainedButtons: React.FC<{ classWallet: string }> = ({ classWallet }) =>
             rateType: rateType[index],
             ratePeriod: ratePeriod[index],
         }));
+
         const wallet = {
             nombre,
             cliente,
             numeroLetrasFacturas: numLetters,
             letras: JSON.stringify(letras),
         };
+
         try {
             await saveWallet(wallet);
             toast.success('El guardado de la información del cliente y sus letras fue exitoso', {
                 position: 'top-right',
             });
             handleClose();
+            refreshData();
         } catch (error) {
             console.error('Error saving wallet:', error);
         }
     };
+    useEffect(() => {
+        if (selectedWalletId) {
+            console.log("ID de la cartera seleccionada en ContainedButtons:", selectedWalletId);
+        }
+    }, [selectedWalletId]);
+
+    useEffect(() => {
+        validateForm();
+    }, [nombre, cliente, numLetters, startDates, endDates, montos, teas, currency, rateType, ratePeriod]);
 
     return (
         <div style={{ margin: '8px' }}>
@@ -153,8 +205,8 @@ const ContainedButtons: React.FC<{ classWallet: string }> = ({ classWallet }) =>
                     borderRadius: '20px',
                     backgroundColor: '#3f51b5',
                     color: 'white',
-                    fontSize: '15px',
-                    padding: '16px',
+                    fontSize: '14px',
+                    padding: '10px',
                     margin: '8px',
                 }}
                 startIcon={<AddIcon />}
@@ -166,44 +218,55 @@ const ContainedButtons: React.FC<{ classWallet: string }> = ({ classWallet }) =>
                 variant="contained"
                 style={{
                     borderRadius: '20px',
-                    backgroundColor: '#3f51b5',
+                    backgroundColor: isItemSelected ? '#3f51b5' : '#b0b0b0',
                     color: 'white',
-                    fontSize: '15px',
-                    padding: '16px',
+                    fontSize: '14px',
+                    padding: '10px',
                     margin: '8px',
                 }}
                 startIcon={<DeleteIcon />}
+                disabled={!isItemSelected}
+                onClick={handleDelete}
             >
                 Eliminar
             </Button>
+
             <Button
                 variant="contained"
                 style={{
                     borderRadius: '20px',
-                    backgroundColor: '#3f51b5',
+                    backgroundColor: isItemSelected ? '#3f51b5' : '#b0b0b0',
                     color: 'white',
-                    fontSize: '15px',
-                    padding: '16px',
+                    fontSize: '14px',
+                    padding: '10px',
                     margin: '8px',
                 }}
                 startIcon={<EditIcon />}
+                disabled={!isItemSelected}
             >
                 Editar
             </Button>
+
             <Button
                 variant="contained"
                 style={{
                     borderRadius: '20px',
                     backgroundColor: '#3f51b5',
                     color: 'white',
-                    fontSize: '15px',
-                    padding: '16px',
+                    fontSize: '14px',
+                    padding: '10px',
                     margin: '8px',
                 }}
                 startIcon={<FilterListIcon />}
             >
                 Filtrar
             </Button>
+            <ConfirmDeleteModal
+                open={isDeleteModalOpen}
+                onClose={handleCloseDeleteModal}
+                onConfirm={handleConfirmDelete}
+                walletName={walletNameToDelete}
+            />
             <Modal
                 open={open}
                 onClose={handleClose}

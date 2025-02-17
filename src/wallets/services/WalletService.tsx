@@ -21,3 +21,32 @@ export const saveWallet = async (wallet: { nombre: string; cliente: string; nume
         throw error;
     }
 };
+
+export const getWalletById = async (id: string) => {
+    try {
+        const response = await axios.get(`${API_URL}/${id}`);
+        return response.data;
+    } catch (error) {
+        console.error(`Error fetching wallet with id ${id}:`, error);
+        throw error;
+    }
+};
+
+export const deleteWalletById = async (id: string) => {
+    try {
+        await axios.delete(`${API_URL}/${id}`);
+    } catch (error) {
+        console.error(`Error deleting wallet with id ${id}:`, error);
+        throw error;
+    }
+};
+
+export const updateWalletById = async (id: string, wallet: { nombre: string; cliente: string; numeroLetrasFacturas: number; letras: string }) => {
+    try {
+        const response = await axios.put(`${API_URL}/${id}`, wallet);
+        return response.data;
+    } catch (error) {
+        console.error(`Error updating wallet with id ${id}:`, error);
+        throw error;
+    }
+};

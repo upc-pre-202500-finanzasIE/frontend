@@ -17,22 +17,22 @@ const LeftSidebar = ({
         {
             routerLink: "wallets",
             icon: <FaApple />,
-            label: "Wallets",
+            label: "Carteras",
         },
         {
-            routerLink: "products",
+            routerLink: "letters",
             icon: <FaBoxOpen />,
-            label: "My Finances",
+            label: "Letras/Facturas",
         },
         {
-            routerLink: "pages",
+            routerLink: "banks",
             icon: <FaFile />,
-            label: "About app",
+            label: "Bancos registrados",
         },
         {
-            routerLink: "settings",
+            routerLink: "about-app",
             icon: <FaCog />,
-            label: "Settings",
+            label: "Sobre la app",
         },
     ];
 
@@ -57,7 +57,7 @@ const LeftSidebar = ({
                 </button>
                 {!isLeftSidebarCollapsed && (
                     <Fragment>
-                        <div className="logo-text">App</div>
+                        <div className="logo-text">Finanzas</div>
                         <button className="btn-close" onClick={closeSidenav}>
                             <FaTimes className="close-icon" />
                         </button>

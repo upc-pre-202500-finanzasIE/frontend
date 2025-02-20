@@ -1,3 +1,4 @@
+// src/wallets/services/LetterService.tsx
 import axios from 'axios';
 
 const API_URL = 'http://localhost:8080/api/v1/letters';
@@ -51,9 +52,11 @@ export const deleteLetterById = async (id: string) => {
     }
 };
 
-export const getByTipoMoneda = async (tipoMoneda: string) => {
+export const getByTipoMoneda = async (tipoMoneda: string, excludeWalletIds: string[] = []) => {
     try {
-        const response = await axios.get(`${API_URL}/tipoMoneda/${tipoMoneda}`);
+        const response = await axios.get(`${API_URL}/tipoMoneda/${tipoMoneda}`, {
+            params: { excludeWalletIds: excludeWalletIds.join(',') }
+        });
         return response.data;
     } catch (error) {
         console.error(`Error fetching letters by tipoMoneda ${tipoMoneda}:`, error);

@@ -154,15 +154,13 @@ const CreateLetterForm: React.FC<{ onCancel: () => void; onFormSubmit: () => voi
                         </Form.Item>
                     </Col>
                 </Row>
-                {hasPlazo && (
-                    <Form.Item
-                        name="hasPlazo"
-                        valuePropName="checked"
-                        label="Tiene plazo de días"
-                    >
-                        <Checkbox onChange={(e) => setHasPlazo(e.target.checked)} disabled={readOnly} />
-                    </Form.Item>
-                )}
+                <Form.Item
+                    name="hasPlazo"
+                    valuePropName="checked"
+                    label="Tiene plazo de días"
+                >
+                    <Checkbox onChange={(e) => setHasPlazo(e.target.checked)} disabled={readOnly} />
+                </Form.Item>
                 {hasPlazo && (
                     <Form.Item
                         name="plazo"

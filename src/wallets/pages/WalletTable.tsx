@@ -1,31 +1,58 @@
-import React, { useState } from "react";
-import { Table, Menu, Dropdown, Button } from "antd";
-import { MoreOutlined } from "@ant-design/icons";
+import React, { useState, useEffect } from "react";
+import { Table } from "antd";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import WalletButtonsComponent from "../components/WalletsButtonsComponent.tsx";
+import { getAllWallets } from "../services/WalletService.tsx";
+import { getAllLetters } from "../services/LetterService.tsx";
 
 interface DataType {
     key: string;
     id: string;
     nombre: string;
-    cliente: string;
-    numeroLetrasFacturas: number;
-    bank: string;
-    letters: string[];
+    letterCount: number;
+    fechaDescuento: string;
+    valorNeto: number;
+    valorEntregado: number;
+    valorRecibido: number;
 }
 
 const WalletTable = () => {
     const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
     const [isItemSelected, setIsItemSelected] = useState(false);
-    const [dropdownVisible, setDropdownVisible] = useState<{ [key: string]: boolean }>({});
-    const [data] = useState<DataType[]>([]);
+    const [data, setData] = useState<DataType[]>([]);
     const [pageSize, setPageSize] = useState(5);
-    const [, setSelectedWalletId] = useState<string | null>(null);
+    const [selectedWalletId, setSelectedWalletId] = useState<string | null>(null);
 
-    const handleDropdownVisibleChange = (key: string, visible: boolean) => {
-        setDropdownVisible((prev) => ({ ...prev, [key]: visible }));
+    const fetchData = async () => {
+        try {
+            const wallets = await getAllWallets();
+            const letters = await getAllLetters();
+
+            const formattedData = wallets.map((wallet: any) => {
+                const walletLetters = letters.filter((letter: any) => letter.walletId === wallet.id);
+
+                return {
+                    key: wallet.id,
+                    id: wallet.id,
+                    nombre: wallet.nombre,
+                    letterCount: walletLetters.length,
+                    fechaDescuento: wallet.fechaDescuento,
+                    valorNeto: wallet.valorNeto,
+                    valorEntregado: wallet.valorEntregado,
+                    valorRecibido: wallet.valorRecibido,
+                };
+            });
+
+            setData(formattedData);
+        } catch (error) {
+            toast.error("Error al cargar los datos.");
+        }
     };
+
+    useEffect(() => {
+        fetchData();
+    }, []);
 
     const rowSelection = {
         selectedRowKeys,
@@ -46,12 +73,18 @@ const WalletTable = () => {
     };
 
     const columns = [
-        { title: "Código", dataIndex: "id", key: "id", width: 100 },
         { title: "Nombre de la cartera", dataIndex: "nombre", key: "nombre", width: 200 },
-        { title: "Nombre del cliente", dataIndex: "cliente", key: "cliente", width: 200 },
-        { title: "Número de letras/facturas", dataIndex: "numeroLetrasFacturas", key: "numeroLetrasFacturas", width: 150 },
-        { title: "Banco", dataIndex: "bank", key: "bank", width: 200 },
-        { title: "Letras", dataIndex: "letters", key: "letters", width: 200 },
+        {
+            title: "Número de letras/facturas",
+            dataIndex: "letterCount",
+            key: "numeroLetrasFacturas",
+            width: 150,
+        },
+        { title: "Código", dataIndex: "id", key: "id", width: 100 },
+        { title: "Fecha de descuento", dataIndex: "fechaDescuento", key: "fechaDescuento", width: 200 },
+        { title: "Valor Neto", dataIndex: "valorNeto", key: "valorNeto", width: 150 },
+        { title: "Valor Entregado", dataIndex: "valorEntregado", key: "valorEntregado", width: 150 },
+        { title: "Valor Recibido", dataIndex: "valorRecibido", key: "valorRecibido", width: 150 },
     ];
 
     const handlePageSizeChange = (current: number, size: number) => {
@@ -60,9 +93,7 @@ const WalletTable = () => {
 
     return (
         <div>
-            <WalletButtonsComponent
-                isItemSelected={isItemSelected}
-            />
+            <WalletButtonsComponent isItemSelected={isItemSelected} selectedWalletId={selectedWalletId} onFormSubmit={fetchData} />
             <Table
                 bordered
                 rowSelection={rowSelection}

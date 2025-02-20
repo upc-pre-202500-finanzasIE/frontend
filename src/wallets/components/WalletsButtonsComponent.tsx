@@ -1,13 +1,56 @@
-import React from 'react';
+// src/wallets/components/WalletButtonsComponent.tsx
+import React, { useState, useRef } from 'react';
 import { Button } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import FilterListIcon from '@material-ui/icons/FilterList';
+import { Modal } from 'antd';
+import CreateWalletForm from '../forms/CreateWalletForm';
+import DeleteWalletForm from '../forms/DeleteWalletForm';
+import { deleteWalletById } from '../services/WalletService';
 
 const WalletButtonsComponent: React.FC<{
     isItemSelected: boolean;
-}> = ({ isItemSelected }) => {
+    selectedWalletId: string | null;
+    onFormSubmit: () => void;
+}> = ({ isItemSelected, selectedWalletId, onFormSubmit }) => {
+    const [isAddModalVisible, setIsAddModalVisible] = useState(false);
+    const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
+    const formRef = useRef<any>(null);
+
+    const handleAddClick = () => {
+        setIsAddModalVisible(true);
+    };
+
+    const handleCancel = () => {
+        setIsAddModalVisible(false);
+        if (formRef.current) {
+            formRef.current.resetFields();
+        }
+    };
+
+    const handleDeleteClick = () => {
+        console.log('Selected Wallet ID:', selectedWalletId);
+        setIsDeleteModalVisible(true);
+    };
+
+    const handleDeleteCancel = () => {
+        setIsDeleteModalVisible(false);
+    };
+
+    const handleDeleteConfirm = async () => {
+        if (selectedWalletId) {
+            try {
+                await deleteWalletById(selectedWalletId);
+                onFormSubmit();
+                setIsDeleteModalVisible(false);
+            } catch (error) {
+                console.error('Error deleting wallet:', error);
+            }
+        }
+    };
+
     return (
         <div style={{ margin: '8px' }}>
             <Button
@@ -21,6 +64,7 @@ const WalletButtonsComponent: React.FC<{
                     margin: '8px',
                 }}
                 startIcon={<AddIcon />}
+                onClick={handleAddClick}
             >
                 Añadir
             </Button>
@@ -36,6 +80,7 @@ const WalletButtonsComponent: React.FC<{
                 }}
                 startIcon={<DeleteIcon />}
                 disabled={!isItemSelected}
+                onClick={handleDeleteClick}
             >
                 Eliminar
             </Button>
@@ -68,6 +113,20 @@ const WalletButtonsComponent: React.FC<{
             >
                 Filtrar
             </Button>
+            <Modal
+                visible={isAddModalVisible}
+                onCancel={handleCancel}
+                footer={null}
+                width={600}
+            >
+                <CreateWalletForm ref={formRef} onCancel={handleCancel} onFormSubmit={onFormSubmit} />
+            </Modal>
+            <DeleteWalletForm
+                visible={isDeleteModalVisible}
+                onConfirm={handleDeleteConfirm}
+                onCancel={handleDeleteCancel}
+                walletId={selectedWalletId}
+            />
         </div>
     );
 };

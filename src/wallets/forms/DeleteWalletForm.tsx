@@ -1,15 +1,15 @@
-// src/wallets/components/DeleteLetterForm.tsx
+// src/wallets/components/DeleteWalletForm.tsx
 import React from 'react';
 import { Modal, Button } from 'antd';
 
-interface DeleteLetterFormProps {
+interface DeleteWalletFormProps {
     visible: boolean;
     onConfirm: () => void;
     onCancel: () => void;
-    letterId: string | null;
+    walletId: string | null;
 }
 
-const DeleteLetterForm: React.FC<DeleteLetterFormProps> = ({ visible, onConfirm, onCancel, letterId }) => {
+const DeleteWalletForm: React.FC<DeleteWalletFormProps> = ({ visible, onConfirm, onCancel, walletId }) => {
     return (
         <Modal
             visible={visible}
@@ -24,9 +24,9 @@ const DeleteLetterForm: React.FC<DeleteLetterFormProps> = ({ visible, onConfirm,
                 </Button>,
             ]}
         >
-            <p>¿Está seguro de que desea eliminar la letra con ID: {letterId}?</p>
+            <p>¿Está seguro de que desea eliminar la cartera con ID: {walletId}?</p>
         </Modal>
     );
 };
 
-export default DeleteLetterForm;
+export default DeleteWalletForm;

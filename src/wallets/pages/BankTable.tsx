@@ -1,27 +1,44 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Table } from "antd";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import WalletButtonsComponent from "../components/WalletsButtonsComponent.tsx";
+import BanksButtonsComponent from "../components/BanksButtonsComponent.tsx";
+import { getAllBanks } from "../services/BanksService.tsx";
 
 interface DataType {
     key: string;
     id: string;
     nombreBanco: string;
     tasaDeInteres: number;
-    isNominal: number;
-    isEfectiva: number;
-    capitalizacion: string;
+    isNominal: boolean;
+    isEfectiva: boolean;
+    capitalizacion: string | null;
     isDolares: boolean;
     isSoles: boolean;
+    gastosIniciales: string | null;
+    gastosFinales: string | null;
 }
 
 const BankTable = () => {
     const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
     const [isItemSelected, setIsItemSelected] = useState(false);
-    const [data] = useState<DataType[]>([]);
+    const [data, setData] = useState<DataType[]>([]);
     const [pageSize, setPageSize] = useState(5);
     const [, setSelectedBankId] = useState<string | null>(null);
+
+    useEffect(() => {
+        const fetchBanks = async () => {
+            try {
+                const banks = await getAllBanks();
+                console.log(banks);
+                setData(banks);
+            } catch (error) {
+                console.error("Error fetching banks:", error);
+            }
+        };
+
+        fetchBanks();
+    }, []);
 
     const rowSelection = {
         selectedRowKeys,
@@ -42,14 +59,49 @@ const BankTable = () => {
     };
 
     const columns = [
-        { title: "Código", dataIndex: "id", key: "id", width: 100 },
-        { title: "Nombre del Banco", dataIndex: "nombreBanco", key: "nombreBanco", width: 200 },
-        { title: "Tasa de Interés", dataIndex: "tasaDeInteres", key: "tasaDeInteres", width: 150 },
-        { title: "IS Nominal", dataIndex: "isNominal", key: "isNominal", width: 150 },
-        { title: "IS Efectiva", dataIndex: "isEfectiva", key: "isEfectiva", width: 150 },
-        { title: "Capitalización", dataIndex: "capitalizacion", key: "capitalizacion", width: 150 },
-        { title: "Dólares", dataIndex: "isDolares", key: "isDolares", width: 100 },
-        { title: "Soles", dataIndex: "isSoles", key: "isSoles", width: 100 },
+        { title: "Nombre del banco", dataIndex: "nombreBanco", key: "nombreBanco", width: 200 },
+        {
+            title: "Tipo de Tasa Ofrecida",
+            dataIndex: "tipoTasa",
+            key: "tipoTasa",
+            width: 200,
+            render: (_: any, record: DataType) => record.isNominal ? "Nominal" : "Efectiva"
+        },
+        {
+            title: "Tipo de Moneda",
+            dataIndex: "tipoMoneda",
+            key: "tipoMoneda",
+            width: 200,
+            render: (_: any, record: DataType) => record.isDolares ? "Dólares" : "Soles"
+        },
+        {
+            title: "Tasa de Interés",
+            dataIndex: "tasaDeInteres",
+            key: "tasaDeInteres",
+            width: 150,
+            render: (text: number) => `${text}%`
+        },
+        {
+            title: "Capitalización",
+            dataIndex: "capitalizacion",
+            key: "capitalizacion",
+            width: 200,
+            render: (text: string | null) => text ? `${text} días` : "No se toma en cuenta capitalización"
+        },
+        {
+            title: "¿Incluye Gastos Iniciales?",
+            dataIndex: "gastosIniciales",
+            key: "gastosIniciales",
+            width: 200,
+            render: (text: string | null) => text ? "Sí incluye" : "No incluye"
+        },
+        {
+            title: "¿Incluye Gastos Finales?",
+            dataIndex: "gastosFinales",
+            key: "gastosFinales",
+            width: 200,
+            render: (text: string | null) => text ? "Sí incluye" : "No incluye"
+        }
     ];
 
     const handlePageSizeChange = (current: number, size: number) => {
@@ -58,7 +110,7 @@ const BankTable = () => {
 
     return (
         <div>
-            <WalletButtonsComponent isItemSelected={isItemSelected} />
+            <BanksButtonsComponent isItemSelected={isItemSelected} />
             <Table
                 bordered
                 rowSelection={rowSelection}

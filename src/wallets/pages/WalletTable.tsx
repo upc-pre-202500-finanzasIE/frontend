@@ -1,10 +1,11 @@
+// src/wallets/pages/WalletTable.tsx
 import React, { useState, useEffect } from "react";
 import { Table } from "antd";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import WalletButtonsComponent from "../components/WalletsButtonsComponent.tsx";
-import { getAllWallets } from "../services/WalletService.tsx";
-import { getAllLetters } from "../services/LetterService.tsx";
+import WalletButtonsComponent from "../components/WalletsButtonsComponent";
+import { getAllWallets } from "../services/WalletService";
+import { getAllLetters } from "../services/LetterService";
 
 interface DataType {
     key: string;
@@ -15,6 +16,8 @@ interface DataType {
     valorNeto: number;
     valorEntregado: number;
     valorRecibido: number;
+    tipoDeCartera: string;
+    bank: number | null;
 }
 
 const WalletTable = () => {
@@ -23,6 +26,7 @@ const WalletTable = () => {
     const [data, setData] = useState<DataType[]>([]);
     const [pageSize, setPageSize] = useState(5);
     const [selectedWalletId, setSelectedWalletId] = useState<string | null>(null);
+    const [selectedWallet, setSelectedWallet] = useState<DataType | null>(null);
 
     const fetchData = async () => {
         try {
@@ -41,6 +45,8 @@ const WalletTable = () => {
                     valorNeto: wallet.valorNeto,
                     valorEntregado: wallet.valorEntregado,
                     valorRecibido: wallet.valorRecibido,
+                    tipoDeCartera: wallet.tipoDeCartera,
+                    bank: wallet.bank
                 };
             });
 
@@ -64,9 +70,14 @@ const WalletTable = () => {
                 });
             } else {
                 const selectedId = selectedRows.length > 0 ? selectedRows[0].id : null;
+                const selectedWallet = selectedRows.length > 0 ? selectedRows[0] : null;
                 setSelectedRowKeys(selectedKeys as string[]);
                 setIsItemSelected(selectedKeys.length > 0);
                 setSelectedWalletId(selectedId);
+                setSelectedWallet(selectedWallet);
+                if (selectedWallet) {
+                    console.log('Selected wallet bank:', selectedWallet.bank);
+                }
             }
         },
         type: "checkbox",
@@ -93,7 +104,7 @@ const WalletTable = () => {
 
     return (
         <div>
-            <WalletButtonsComponent isItemSelected={isItemSelected} selectedWalletId={selectedWalletId} onFormSubmit={fetchData} />
+            <WalletButtonsComponent isItemSelected={isItemSelected} selectedWalletId={selectedWalletId} selectedWallet={selectedWallet} onFormSubmit={fetchData} />
             <Table
                 bordered
                 rowSelection={rowSelection}

@@ -6,6 +6,7 @@ const API_URL = 'http://localhost:8080/api/v1/banks';
 export const getAllBanks = async () => {
     try {
         const response = await axios.get(API_URL);
+        console.log('getAllBanks response:', response.data); // Log the response data
         return response.data;
     } catch (error) {
         console.error('Error fetching banks:', error);
@@ -13,7 +14,7 @@ export const getAllBanks = async () => {
     }
 };
 
-export const getBankById = async (id: string) => {
+export const getBankById = async (id: number) => {
     try {
         const response = await axios.get(`${API_URL}/${id}`);
         return response.data;
@@ -33,7 +34,7 @@ export const insertBank = async (bank: { nombreBanco: string; tasaDeInteres: num
     }
 };
 
-export const updateBankById = async (id: string, bank: { nombreBanco: string; tasaDeInteres: number; isNominal: boolean; isEfectiva: boolean; capitalizacion?: string; isDolares: boolean; isSoles: boolean }) => {
+export const updateBankById = async (id: number, bank: { nombreBanco: string; tasaDeInteres: number; isNominal: boolean; isEfectiva: boolean; capitalizacion?: string; isDolares: boolean; isSoles: boolean }) => {
     try {
         const response = await axios.put(`${API_URL}/${id}`, bank);
         return response.data;
@@ -43,11 +44,21 @@ export const updateBankById = async (id: string, bank: { nombreBanco: string; ta
     }
 };
 
-export const deleteBankById = async (id: string) => {
+export const deleteBankById = async (id: number) => {
     try {
         await axios.delete(`${API_URL}/${id}`);
     } catch (error) {
         console.error(`Error deleting bank with id ${id}:`, error);
+        throw error;
+    }
+};
+
+export const getBankByTipoMoneda = async (tipoMoneda: string) => {
+    try {
+        const response = await axios.get(`${API_URL}/tipoMoneda/${tipoMoneda}`);
+        return response.data;
+    } catch (error) {
+        console.error(`Error fetching banks by tipoMoneda ${tipoMoneda}:`, error);
         throw error;
     }
 };

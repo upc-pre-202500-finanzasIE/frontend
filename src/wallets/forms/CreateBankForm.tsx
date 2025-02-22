@@ -46,9 +46,9 @@ const CreateBankForm: React.FC<{ onCancel: () => void; onFormSubmit: () => void;
         const parsedValues = {
             ...values,
             isNominal: values.tipoTasa === "nominal",
-            isEfectiva: values.tipoTasa === "efectiva",
-            isDolares: values.tipoMoneda === "dolares",
-            isSoles: values.tipoMoneda === "soles",
+            efectiva: values.tipoTasa === "efectiva",
+            dolares: values.tipoMoneda === "dolares",
+            soles: values.tipoMoneda === "soles",
             gastosIniciales: considerGastosIniciales ? JSON.stringify(values.gastosIniciales) : null,
             gastosFinales: considerGastosFinales ? JSON.stringify(values.gastosFinales) : null,
         };

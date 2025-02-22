@@ -22,7 +22,7 @@ export const saveWallet = async (wallet: { nombre: string; cliente: string; nume
     }
 };
 
-export const getWalletById = async (id: string) => {
+export const getWalletById = async (id: number) => {
     try {
         const response = await axios.get(`${API_URL}/${id}`);
         return response.data;
@@ -32,7 +32,7 @@ export const getWalletById = async (id: string) => {
     }
 };
 
-export const deleteWalletById = async (id: string) => {
+export const deleteWalletById = async (id: number) => {
     try {
         await axios.delete(`${API_URL}/${id}`);
     } catch (error) {
@@ -41,12 +41,22 @@ export const deleteWalletById = async (id: string) => {
     }
 };
 
-export const updateWalletById = async (id: string, wallet: { nombre: string; cliente: string; numeroLetrasFacturas: number; letras: string }) => {
+export const updateWalletById = async (id: number, wallet: { nombre: string; cliente: string; numeroLetrasFacturas: number; letras: string }) => {
     try {
         const response = await axios.put(`${API_URL}/${id}`, wallet);
         return response.data;
     } catch (error) {
         console.error(`Error updating wallet with id ${id}:`, error);
+        throw error;
+    }
+};
+
+export const updateWalletBankId = async (walletId: number, bankId: number) => {
+    try {
+        const response = await axios.put(`${API_URL}/${walletId}/bank/${bankId}`);
+        return response.data;
+    } catch (error) {
+        console.error(`Error updating wallet bank id with walletId ${walletId} and bankId ${bankId}:`, error);
         throw error;
     }
 };

@@ -5,18 +5,21 @@ import AddIcon from '@material-ui/icons/Add';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import FilterListIcon from '@material-ui/icons/FilterList';
-import { Modal } from 'antd';
+import { Modal, message } from 'antd';
 import CreateWalletForm from '../forms/CreateWalletForm';
 import DeleteWalletForm from '../forms/DeleteWalletForm';
+import AssociatingWalletBankForm from '../forms/AssociatingWalletBankForm';
 import { deleteWalletById } from '../services/WalletService';
 
 const WalletButtonsComponent: React.FC<{
     isItemSelected: boolean;
     selectedWalletId: string | null;
+    selectedWallet: { nombre: string; tipoDeCartera: string; bank: number | null } | null;
     onFormSubmit: () => void;
-}> = ({ isItemSelected, selectedWalletId, onFormSubmit }) => {
+}> = ({ isItemSelected, selectedWalletId, selectedWallet, onFormSubmit }) => {
     const [isAddModalVisible, setIsAddModalVisible] = useState(false);
     const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
+    const [isAssociateModalVisible, setIsAssociateModalVisible] = useState(false);
     const formRef = useRef<any>(null);
 
     const handleAddClick = () => {
@@ -31,7 +34,6 @@ const WalletButtonsComponent: React.FC<{
     };
 
     const handleDeleteClick = () => {
-        console.log('Selected Wallet ID:', selectedWalletId);
         setIsDeleteModalVisible(true);
     };
 
@@ -49,6 +51,23 @@ const WalletButtonsComponent: React.FC<{
                 console.error('Error deleting wallet:', error);
             }
         }
+    };
+
+    const handleAssociateClick = () => {
+        if (selectedWallet && selectedWallet.bank !== null) {
+            message.warning('Esta cartera ya tiene una institucion asociada');
+            return;
+        }
+        setIsAssociateModalVisible(true);
+    };
+
+    const handleAssociateCancel = () => {
+        setIsAssociateModalVisible(false);
+    };
+
+    const handleAssociateSubmit = (bankId: number) => {
+        setIsAssociateModalVisible(false);
+        onFormSubmit();
     };
 
     return (
@@ -113,6 +132,22 @@ const WalletButtonsComponent: React.FC<{
             >
                 Filtrar
             </Button>
+            <Button
+                variant="contained"
+                style={{
+                    borderRadius: '20px',
+                    backgroundColor: isItemSelected ? '#3f51b5' : '#b0b0b0',
+                    color: 'white',
+                    fontSize: '14px',
+                    padding: '10px',
+                    margin: '8px',
+                }}
+                startIcon={<AddIcon />}
+                disabled={!isItemSelected}
+                onClick={handleAssociateClick}
+            >
+                Asociar cartera Institucion Financiera
+            </Button>
             <Modal
                 visible={isAddModalVisible}
                 onCancel={handleCancel}
@@ -127,6 +162,14 @@ const WalletButtonsComponent: React.FC<{
                 onCancel={handleDeleteCancel}
                 walletId={selectedWalletId}
             />
+            {selectedWallet && (
+                <AssociatingWalletBankForm
+                    visible={isAssociateModalVisible}
+                    onCancel={handleAssociateCancel}
+                    wallet={selectedWallet}
+                    onFormSubmit={handleAssociateSubmit}
+                />
+            )}
         </div>
     );
 };

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Form, Button, Modal, Table } from "antd";
+import { toast } from "react-toastify";
 import { getBankByTipoMoneda, getAllBanks } from "../services/BanksService";
 import { getAllWallets, updateWalletBankId } from "../services/WalletService";
 
@@ -22,6 +23,7 @@ const AssociatingWalletBankForm: React.FC<AssociatingWalletBankFormProps> = ({ v
             const tipoMoneda = wallet.tipoDeCartera;
             try {
                 const response = await getBankByTipoMoneda(tipoMoneda);
+                console.log('Banks fetched by tipoMoneda:', response);
                 setBanks(response);
             } catch (error) {
                 console.error("Error fetching banks:", error);
@@ -31,7 +33,11 @@ const AssociatingWalletBankForm: React.FC<AssociatingWalletBankFormProps> = ({ v
         fetchBanks();
 
         // Call getAllBanks to see the log output
-        getAllBanks();
+        getAllBanks().then(response => {
+            console.log('All banks:', response);
+        }).catch(error => {
+            console.error("Error fetching all banks:", error);
+        });
     }, [wallet]);
 
     useEffect(() => {
@@ -45,6 +51,7 @@ const AssociatingWalletBankForm: React.FC<AssociatingWalletBankFormProps> = ({ v
 
     const handleSubmit = async () => {
         if (selectedBankId !== null) {
+            console.log('Associating wallet with bankId:', selectedBankId);
             await updateWalletBankId(wallet.id, selectedBankId);
             onFormSubmit(selectedBankId);
         }
@@ -53,11 +60,18 @@ const AssociatingWalletBankForm: React.FC<AssociatingWalletBankFormProps> = ({ v
     const rowSelection = {
         selectedRowKeys,
         onChange: (selectedKeys: React.Key[], selectedRows: any[]) => {
-            setSelectedRowKeys(selectedKeys as number[]);
-            setSelectedBankId(selectedRows.length > 0 ? selectedRows[0].id : null);
-            setIsBankSelected(selectedRows.length > 0);
+            if (selectedKeys.length > 1) {
+                toast.warning("Solo puede seleccionar un banco a la vez", {
+                    position: "top-right",
+                    autoClose: 3000,
+                });
+            } else {
+                setSelectedRowKeys(selectedKeys as number[]);
+                setSelectedBankId(selectedRows.length > 0 ? selectedRows[0].id : null);
+                setIsBankSelected(selectedRows.length > 0);
+            }
         },
-        type: "radio",
+        type: "checkbox",
     };
 
     const columns = [
@@ -67,14 +81,14 @@ const AssociatingWalletBankForm: React.FC<AssociatingWalletBankFormProps> = ({ v
             dataIndex: "tipoTasa",
             key: "tipoTasa",
             width: 200,
-            render: (_: any, record: any) => record.isNominal ? "Nominal" : "Efectiva"
+            render: (_: any, record: any) => record.nominal ? "Nominal" : "Efectiva"
         },
         {
             title: "Tipo de Moneda",
             dataIndex: "tipoMoneda",
             key: "tipoMoneda",
             width: 200,
-            render: (_: any, record: any) => record.isDolares ? "Dólares" : "Soles"
+            render: (_: any, record: any) => record.dolares ? "Dólares" : "Soles"
         },
         {
             title: "Tasa de Interés",

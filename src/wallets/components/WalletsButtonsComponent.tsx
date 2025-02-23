@@ -1,9 +1,8 @@
-// src/wallets/components/WalletButtonsComponent.tsx
 import React, { useState, useRef } from 'react';
 import { Button } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import DeleteIcon from '@material-ui/icons/Delete';
-import EditIcon from '@material-ui/icons/Edit';
+import EditIcon from '@material-ui/icons.Edit';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import { Modal } from 'antd';
 import { toast } from 'react-toastify';
@@ -12,7 +11,6 @@ import CreateWalletForm from '../forms/CreateWalletForm';
 import DeleteWalletForm from '../forms/DeleteWalletForm';
 import AssociatingWalletBankForm from '../forms/AssociatingWalletBankForm';
 import { deleteWalletById } from '../services/WalletService';
-
 
 const WalletButtonsComponent: React.FC<{
     isItemSelected: boolean;
@@ -69,6 +67,7 @@ const WalletButtonsComponent: React.FC<{
     };
 
     const handleAssociateSubmit = (bankId: number) => {
+        console.log('Wallet associated with bankId:', bankId);
         setIsAssociateModalVisible(false);
         onFormSubmit();
     };

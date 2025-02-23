@@ -5,11 +5,14 @@ import AddIcon from '@material-ui/icons/Add';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import FilterListIcon from '@material-ui/icons/FilterList';
-import { Modal, message } from 'antd';
+import { Modal } from 'antd';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import CreateWalletForm from '../forms/CreateWalletForm';
 import DeleteWalletForm from '../forms/DeleteWalletForm';
 import AssociatingWalletBankForm from '../forms/AssociatingWalletBankForm';
 import { deleteWalletById } from '../services/WalletService';
+
 
 const WalletButtonsComponent: React.FC<{
     isItemSelected: boolean;
@@ -55,7 +58,7 @@ const WalletButtonsComponent: React.FC<{
 
     const handleAssociateClick = () => {
         if (selectedWallet && selectedWallet.bank !== null) {
-            message.warning('Esta cartera ya tiene una institucion asociada');
+            toast.warning("Esta cartera ya tiene una institucion asociada", { position: "top-right", autoClose: 3000 });
             return;
         }
         setIsAssociateModalVisible(true);

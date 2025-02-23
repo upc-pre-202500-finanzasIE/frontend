@@ -1,8 +1,10 @@
 import React, { useState, forwardRef, useImperativeHandle, useEffect } from "react";
-import { Form, Input, Button, InputNumber, Card, Select, Checkbox } from "antd";
+import { Form, Input, Button, InputNumber, Card, Select, Checkbox, Tooltip } from "antd";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { insertBank } from "../services/BanksService.tsx";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faInfoCircle} from "@fortawesome/free-solid-svg-icons";
 
 interface FormValues {
     nombreBanco: string;
@@ -10,6 +12,7 @@ interface FormValues {
     tipoTasa: string;
     capitalizacion: number;
     tipoMoneda: string;
+    periodoTasa: number;
     gastosIniciales: {
         seguroInicial: number;
         comisionPagoInicial: number;
@@ -45,13 +48,15 @@ const CreateBankForm: React.FC<{ onCancel: () => void; onFormSubmit: () => void;
     const onFinish = async (values: FormValues) => {
         const parsedValues = {
             ...values,
-            isNominal: values.tipoTasa === "nominal",
+            nominal: values.tipoTasa === "nominal",
             efectiva: values.tipoTasa === "efectiva",
             dolares: values.tipoMoneda === "dolares",
             soles: values.tipoMoneda === "soles",
             gastosIniciales: considerGastosIniciales ? JSON.stringify(values.gastosIniciales) : null,
             gastosFinales: considerGastosFinales ? JSON.stringify(values.gastosFinales) : null,
         };
+
+        console.log("Submitted values:", parsedValues);
 
         try {
             await insertBank(parsedValues);
@@ -60,10 +65,14 @@ const CreateBankForm: React.FC<{ onCancel: () => void; onFormSubmit: () => void;
             onCancel();
         } catch (error) {
             console.log("ERROR", error);
+            if (error.response) {
+                console.log("Error response data:", error.response.data);
+                console.log("Error response status:", error.response.status);
+                console.log("Error response headers:", error.response.headers);
+            }
             toast.error("Error al crear el banco", { position: "top-right", autoClose: 3000 });
         }
     };
-
     return (
         <Card title={readOnly ? "Detalles del Banco" : "Crear Nuevo Banco"} style={{ width: "100%" }}>
             <Form form={form} layout="vertical" onFinish={onFinish}>
@@ -84,6 +93,20 @@ const CreateBankForm: React.FC<{ onCancel: () => void; onFormSubmit: () => void;
                         <InputNumber style={{ width: "100%" }} disabled={readOnly} />
                     </Form.Item>
                 )}
+                <Form.Item
+                    name="periodoTasa"
+                    label={
+                        <span>
+            Periodo de Tasa&nbsp;
+                            <Tooltip title="90 días significa tasa trimestral, 60 días tasa bimestral, 120 días tasa cuatrimestral, 30 días tasa mensual, 15 días tasa quincenal y 360 días tasa anual, también puede contar tasas que sean por días como cada 1 día, 2 días, etc.">
+                <FontAwesomeIcon icon={faInfoCircle} />
+            </Tooltip>
+        </span>
+                    }
+                    rules={[{ required: true, message: "Ingrese el periodo de tasa" }]}
+                >
+                    <InputNumber style={{ width: "100%" }} disabled={readOnly} />
+                </Form.Item>
                 <Form.Item name="tipoMoneda" label="Tipo de Moneda" rules={[{ required: true, message: "Seleccione el tipo de moneda" }]}>
                     <Select disabled={readOnly}>
                         <Select.Option value="soles">Soles</Select.Option>

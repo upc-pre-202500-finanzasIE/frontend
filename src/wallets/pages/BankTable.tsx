@@ -10,11 +10,11 @@ interface DataType {
     id: string;
     nombreBanco: string;
     tasaDeInteres: number;
-    isNominal: boolean;
-    isEfectiva: boolean;
+    nominal: boolean;
+    efectiva: boolean;
     capitalizacion: string | null;
-    isDolares: boolean;
-    isSoles: boolean;
+    dolares: boolean;
+    soles: boolean;
     gastosIniciales: string | null;
     gastosFinales: string | null;
 }
@@ -65,14 +65,14 @@ const BankTable = () => {
             dataIndex: "tipoTasa",
             key: "tipoTasa",
             width: 200,
-            render: (_: any, record: DataType) => record.isNominal ? "Nominal" : "Efectiva"
+            render: (_: any, record: DataType) => record.nominal ? "Nominal" : "Efectiva"
         },
         {
             title: "Tipo de Moneda",
             dataIndex: "tipoMoneda",
             key: "tipoMoneda",
             width: 200,
-            render: (_: any, record: DataType) => record.isDolares ? "Dólares" : "Soles"
+            render: (_: any, record: DataType) => record.dolares ? "Dólares" : "Soles"
         },
         {
             title: "Tasa de Interés",

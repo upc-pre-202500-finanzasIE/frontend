@@ -24,7 +24,7 @@ export const getBankById = async (id: number) => {
     }
 };
 
-export const insertBank = async (bank: { nombreBanco: string; tasaDeInteres: number; isNominal: boolean; isEfectiva: boolean; capitalizacion?: string; isDolares: boolean; isSoles: boolean }) => {
+export const insertBank = async (bank: { nombreBanco: string; tasaDeInteres: number; isNominal: boolean; isEfectiva: boolean; capitalizacion?: string; isDolares: boolean; isSoles: boolean; periodoTasa?: number }) => {
     try {
         const response = await axios.post(API_URL, bank);
         return response.data;
@@ -34,7 +34,7 @@ export const insertBank = async (bank: { nombreBanco: string; tasaDeInteres: num
     }
 };
 
-export const updateBankById = async (id: number, bank: { nombreBanco: string; tasaDeInteres: number; isNominal: boolean; isEfectiva: boolean; capitalizacion?: string; isDolares: boolean; isSoles: boolean }) => {
+export const updateBankById = async (id: number, bank: { nombreBanco: string; tasaDeInteres: number; isNominal: boolean; isEfectiva: boolean; capitalizacion?: string; isDolares: boolean; isSoles: boolean; periodoTasa?: number }) => {
     try {
         const response = await axios.put(`${API_URL}/${id}`, bank);
         return response.data;

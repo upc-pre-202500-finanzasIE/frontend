@@ -2,15 +2,18 @@ import React, { useState, useRef } from 'react';
 import { Button } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import DeleteIcon from '@material-ui/icons/Delete';
-import EditIcon from '@material-ui/icons.Edit';
+import EditIcon from '@material-ui/icons/Edit';
 import FilterListIcon from '@material-ui/icons/FilterList';
+import UpdateIcon from '@material-ui/icons/Update';
+import VisibilityIcon from '@material-ui/icons/Visibility';
 import { Modal } from 'antd';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import CreateWalletForm from '../forms/CreateWalletForm';
 import DeleteWalletForm from '../forms/DeleteWalletForm';
 import AssociatingWalletBankForm from '../forms/AssociatingWalletBankForm';
-import { deleteWalletById } from '../services/WalletService';
+import WalletDetailsModal from '../forms/WalletDetailsModal';
+import { deleteWalletById, updateWalletValorNeto } from '../services/WalletService';
 
 const WalletButtonsComponent: React.FC<{
     isItemSelected: boolean;
@@ -21,6 +24,7 @@ const WalletButtonsComponent: React.FC<{
     const [isAddModalVisible, setIsAddModalVisible] = useState(false);
     const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
     const [isAssociateModalVisible, setIsAssociateModalVisible] = useState(false);
+    const [isDetailsModalVisible, setIsDetailsModalVisible] = useState(false);
     const formRef = useRef<any>(null);
 
     const handleAddClick = () => {
@@ -65,11 +69,31 @@ const WalletButtonsComponent: React.FC<{
     const handleAssociateCancel = () => {
         setIsAssociateModalVisible(false);
     };
+    const handleDetailsCancel = () => {
+        setIsDetailsModalVisible(false);
+    };
 
     const handleAssociateSubmit = (bankId: number) => {
         console.log('Wallet associated with bankId:', bankId);
         setIsAssociateModalVisible(false);
         onFormSubmit();
+    };
+
+    const handleUpdateValuesClick = async () => {
+        if (selectedWalletId) {
+            try {
+                await updateWalletValorNeto(selectedWalletId, 0, 0);
+                toast.success("Valores de cartera actualizados", { position: "top-right", autoClose: 3000 });
+                onFormSubmit();
+            } catch (error) {
+                console.error('Error updating wallet values:', error);
+                toast.error("Error al actualizar valores de cartera", { position: "top-right", autoClose: 3000 });
+            }
+        }
+    };
+
+    const handleDetailsClick = () => {
+        setIsDetailsModalVisible(true);
     };
 
     return (
@@ -150,6 +174,38 @@ const WalletButtonsComponent: React.FC<{
             >
                 Asociar cartera Institucion Financiera
             </Button>
+            <Button
+                variant="contained"
+                style={{
+                    borderRadius: '20px',
+                    backgroundColor: isItemSelected && selectedWallet?.bank !== null ? '#3f51b5' : '#b0b0b0',
+                    color: 'white',
+                    fontSize: '14px',
+                    padding: '10px',
+                    margin: '8px',
+                }}
+                startIcon={<UpdateIcon />}
+                disabled={!isItemSelected || selectedWallet?.bank === null}
+                onClick={handleUpdateValuesClick}
+            >
+                Actualizar valores de cartera
+            </Button>
+            <Button
+                variant="contained"
+                style={{
+                    borderRadius: '20px',
+                    backgroundColor: isItemSelected ? '#3f51b5' : '#b0b0b0',
+                    color: 'white',
+                    fontSize: '14px',
+                    padding: '10px',
+                    margin: '8px',
+                }}
+                startIcon={<VisibilityIcon />}
+                disabled={!isItemSelected}
+                onClick={handleDetailsClick}
+            >
+                Ver Detalles
+            </Button>
             <Modal
                 visible={isAddModalVisible}
                 onCancel={handleCancel}
@@ -172,6 +228,12 @@ const WalletButtonsComponent: React.FC<{
                     onFormSubmit={handleAssociateSubmit}
                 />
             )}
+            <WalletDetailsModal
+                visible={isDetailsModalVisible}
+                onCancel={handleDetailsCancel}
+                walletName={selectedWallet?.nombre || ''}
+                walletId={selectedWalletId || ''}
+            />
         </div>
     );
 };

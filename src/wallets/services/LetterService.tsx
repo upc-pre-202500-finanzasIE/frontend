@@ -63,3 +63,13 @@ export const getByTipoMoneda = async (tipoMoneda: string, excludeWalletIds: stri
         throw error;
     }
 };
+
+export const getLettersByWalletId = async (walletId: string) => {
+    try {
+        const response = await axios.get(`${API_URL}/wallet/${walletId}`);
+        return response.data;
+    } catch (error) {
+        console.error(`Error fetching letters for wallet with id ${walletId}:`, error);
+        throw error;
+    }
+};

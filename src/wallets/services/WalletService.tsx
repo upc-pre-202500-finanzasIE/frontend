@@ -60,3 +60,19 @@ export const updateWalletBankId = async (walletId: number, bankId: number) => {
         throw error;
     }
 };
+
+export const updateWalletValorNeto = async (walletId: number, gastosIniciales?: number, gastosFinales?: number) => {
+    try {
+        const params = new URLSearchParams();
+        if (gastosIniciales !== undefined) {
+            params.append('gastosIniciales', gastosIniciales.toString());
+        }
+        if (gastosFinales !== undefined) {
+            params.append('gastosFinales', gastosFinales.toString());
+        }
+        await axios.put(`${API_URL}/${walletId}/update-valor-neto?${params.toString()}`);
+    } catch (error) {
+        console.error(`Error updating valor neto for wallet with id ${walletId}:`, error);
+        throw error;
+    }
+};

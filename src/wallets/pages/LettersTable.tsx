@@ -16,6 +16,7 @@ interface DataType {
     plazo: number;
     soles: boolean;
     dolares: boolean;
+    estado: string;
 }
 
 const LetterTable = () => {
@@ -32,7 +33,8 @@ const LetterTable = () => {
             setData(letters.map((letter: any) => ({
                 ...letter,
                 key: letter.id,
-                tipoMoneda: letter.soles ? "Soles" : letter.dolares ? "Dólares" : ""
+                tipoMoneda: letter.soles ? "Soles" : letter.dolares ? "Dólares" : "",
+                estado: letter.estado
             })));
         } catch (error) {
             toast.error("Error fetching letters", { position: "top-right", autoClose: 3000 });
@@ -64,15 +66,18 @@ const LetterTable = () => {
         },
         type: "checkbox",
     };
+
     const columns = [
         { title: "Código", dataIndex: "id", key: "id", width: 100 },
         { title: "Cliente", dataIndex: "cliente", key: "cliente", width: 200 },
         { title: "Fecha de Firma", dataIndex: "fechaFirma", key: "fechaFirma", width: 150 },
-        { title: "Valor Nominal", dataIndex: "valorNominal", key: "valorNominal", width: 150 },
         { title: "Fecha de Vencimiento", dataIndex: "fechaVencimiento", key: "fechaVencimiento", width: 150 },
+        { title: "Valor Nominal", dataIndex: "valorNominal", key: "valorNominal", width: 150 },
+        { title: "Estado", dataIndex: "estado", key: "estado", width: 150 },
         { title: "Plazo", dataIndex: "plazo", key: "plazo", width: 100 },
         { title: "Tipo de Moneda", dataIndex: "tipoMoneda", key: "tipoMoneda", width: 150 },
     ];
+
     const handlePageSizeChange = (current: number, size: number) => {
         setPageSize(size);
     };

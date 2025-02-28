@@ -30,8 +30,9 @@ const BankTable = () => {
         const fetchBanks = async () => {
             try {
                 const banks = await getAllBanks();
-                console.log(banks);
-                setData(banks);
+                const banksWithKeys = banks.map((bank: DataType) => ({ ...bank, key: bank.id }));
+                console.log(banksWithKeys);
+                setData(banksWithKeys);
             } catch (error) {
                 console.error("Error fetching banks:", error);
             }
@@ -55,7 +56,7 @@ const BankTable = () => {
                 setSelectedBankId(selectedId);
             }
         },
-        type: "checkbox",
+        type: "checkbox"
     };
 
     const columns = [

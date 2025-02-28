@@ -19,11 +19,9 @@ const AssociatingWalletBankForm: React.FC<AssociatingWalletBankFormProps> = ({ v
 
     useEffect(() => {
         const fetchBanks = async () => {
-            console.log('wallet.tipoDeCartera:', wallet.tipoDeCartera);
             const tipoMoneda = wallet.tipoDeCartera;
             try {
                 const response = await getBankByTipoMoneda(tipoMoneda);
-                console.log('Banks fetched by tipoMoneda:', response);
                 setBanks(response);
             } catch (error) {
                 console.error("Error fetching banks:", error);
@@ -31,27 +29,10 @@ const AssociatingWalletBankForm: React.FC<AssociatingWalletBankFormProps> = ({ v
         };
 
         fetchBanks();
-
-        // Call getAllBanks to see the log output
-        getAllBanks().then(response => {
-            console.log('All banks:', response);
-        }).catch(error => {
-            console.error("Error fetching all banks:", error);
-        });
     }, [wallet]);
-
-    useEffect(() => {
-        const fetchWallets = async () => {
-            const wallets = await getAllWallets();
-            console.log('All wallets:', wallets);
-        };
-
-        fetchWallets();
-    }, []);
 
     const handleSubmit = async () => {
         if (selectedBankId !== null) {
-            console.log('Associating wallet with bankId:', selectedBankId);
             await updateWalletBankId(wallet.id, selectedBankId);
             onFormSubmit(selectedBankId);
         }
@@ -65,11 +46,11 @@ const AssociatingWalletBankForm: React.FC<AssociatingWalletBankFormProps> = ({ v
                     position: "top-right",
                     autoClose: 3000,
                 });
-            } else {
-                setSelectedRowKeys(selectedKeys as number[]);
-                setSelectedBankId(selectedRows.length > 0 ? selectedRows[0].id : null);
-                setIsBankSelected(selectedRows.length > 0);
+                return;
             }
+            setSelectedRowKeys(selectedKeys as number[]);
+            setSelectedBankId(selectedRows.length > 0 ? selectedRows[0].id : null);
+            setIsBankSelected(selectedKeys.length > 0);
         },
         type: "checkbox",
     };
@@ -96,27 +77,6 @@ const AssociatingWalletBankForm: React.FC<AssociatingWalletBankFormProps> = ({ v
             key: "tasaDeInteres",
             width: 150,
             render: (text: number) => `${text}%`
-        },
-        {
-            title: "Capitalización",
-            dataIndex: "capitalizacion",
-            key: "capitalizacion",
-            width: 200,
-            render: (text: string | null) => text ? `${text} días` : "No se toma en cuenta capitalización"
-        },
-        {
-            title: "¿Incluye Gastos Iniciales?",
-            dataIndex: "gastosIniciales",
-            key: "gastosIniciales",
-            width: 200,
-            render: (text: string | null) => text ? "Sí incluye" : "No incluye"
-        },
-        {
-            title: "¿Incluye Gastos Finales?",
-            dataIndex: "gastosFinales",
-            key: "gastosFinales",
-            width: 200,
-            render: (text: string | null) => text ? "Sí incluye" : "No incluye"
         }
     ];
 
@@ -125,6 +85,7 @@ const AssociatingWalletBankForm: React.FC<AssociatingWalletBankFormProps> = ({ v
             <Form layout="vertical" onFinish={handleSubmit}>
                 <Form.Item label="Seleccione el banco" required>
                     <Table
+                        rowKey="id"
                         rowSelection={rowSelection}
                         columns={columns}
                         dataSource={banks}

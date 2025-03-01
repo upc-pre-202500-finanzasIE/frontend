@@ -1,3 +1,4 @@
+// src/wallets/pages/BankTable.tsx
 import React, { useState, useEffect } from "react";
 import { Table } from "antd";
 import { ToastContainer, toast } from "react-toastify";
@@ -24,20 +25,19 @@ const BankTable = () => {
     const [isItemSelected, setIsItemSelected] = useState(false);
     const [data, setData] = useState<DataType[]>([]);
     const [pageSize, setPageSize] = useState(5);
-    const [, setSelectedBankId] = useState<string | null>(null);
+    const [selectedBankId, setSelectedBankId] = useState<string | null>(null);
+
+    const fetchBanks = async () => {
+        try {
+            const banks = await getAllBanks();
+            const banksWithKeys = banks.map((bank: DataType) => ({ ...bank, key: bank.id }));
+            setData(banksWithKeys);
+        } catch (error) {
+            console.error("Error fetching banks:", error);
+        }
+    };
 
     useEffect(() => {
-        const fetchBanks = async () => {
-            try {
-                const banks = await getAllBanks();
-                const banksWithKeys = banks.map((bank: DataType) => ({ ...bank, key: bank.id }));
-                console.log(banksWithKeys);
-                setData(banksWithKeys);
-            } catch (error) {
-                console.error("Error fetching banks:", error);
-            }
-        };
-
         fetchBanks();
     }, []);
 
@@ -111,7 +111,7 @@ const BankTable = () => {
 
     return (
         <div>
-            <BanksButtonsComponent isItemSelected={isItemSelected} />
+            <BanksButtonsComponent isItemSelected={isItemSelected} selectedBankId={selectedBankId} onFormSubmit={fetchBanks} />
             <Table
                 bordered
                 rowSelection={rowSelection}

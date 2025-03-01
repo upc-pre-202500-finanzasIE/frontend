@@ -118,8 +118,23 @@ const CreateBankForm: React.FC<{ onCancel: () => void; onFormSubmit: () => void;
                 </Form.Item>
                 {considerGastosIniciales && (
                     <>
-                        <Form.Item name={["gastosIniciales", "seguroInicial"]} label="Seguro Inicial" rules={[{ required: true, message: "Ingrese el seguro inicial" }]}>
-                            <InputNumber style={{ width: "100%" }} disabled={readOnly} />
+                        <Form.Item
+                            name={["gastosIniciales", "seguroInicial"]}
+                            label={
+                                <span>
+            Seguro Inicial&nbsp;
+                                    <Tooltip title="Este valor es un porcentaje">
+                <FontAwesomeIcon icon={faInfoCircle} />
+            </Tooltip>
+        </span>
+                            }
+                            rules={[{ required: true, message: "Ingrese el seguro inicial" }]}
+                        >
+                            <InputNumber
+                                style={{ width: "100%" }}
+                                formatter={value => `${value}%`}
+                                disabled={readOnly}
+                            />
                         </Form.Item>
                         <Form.Item name={["gastosIniciales", "comisionPagoInicial"]} label="Comisión por Pago Inicial" rules={[{ required: true, message: "Ingrese la comisión por pago inicial" }]}>
                             <InputNumber style={{ width: "100%" }} disabled={readOnly} />
@@ -140,8 +155,23 @@ const CreateBankForm: React.FC<{ onCancel: () => void; onFormSubmit: () => void;
                         <Form.Item name={["gastosFinales", "comisionTipoMoneda"]} label="Comisión por Tipo de Moneda" rules={[{ required: true, message: "Ingrese la comisión por tipo de moneda" }]}>
                             <InputNumber style={{ width: "100%" }} disabled={readOnly} />
                         </Form.Item>
-                        <Form.Item name={["gastosFinales", "comisionFija"]} label="Comisión Fija" rules={[{ required: true, message: "Ingrese la comisión fija" }]}>
-                            <InputNumber style={{ width: "100%" }} disabled={readOnly} />
+                        <Form.Item
+                            name={["gastosFinales", "comisionFija"]}
+                            label={
+                                <span>
+            Comisión Fija&nbsp;
+                                    <Tooltip title="Este valor es un porcentaje">
+                <FontAwesomeIcon icon={faInfoCircle} />
+            </Tooltip>
+        </span>
+                            }
+                            rules={[{ required: true, message: "Ingrese la comisión fija" }]}
+                        >
+                            <InputNumber
+                                style={{ width: "100%" }}
+                                formatter={value => `${value}%`}
+                                disabled={readOnly}
+                            />
                         </Form.Item>
                     </>
                 )}

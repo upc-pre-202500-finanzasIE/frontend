@@ -82,7 +82,7 @@ const WalletButtonsComponent: React.FC<{
     const handleUpdateValuesClick = async () => {
         if (selectedWalletId) {
             try {
-                await updateWalletValorNeto(selectedWalletId, 0, 0);
+                await updateWalletValorNeto(selectedWalletId, 0);
                 toast.success("Valores de cartera actualizados", { position: "top-right", autoClose: 3000 });
                 onFormSubmit();
             } catch (error) {
@@ -128,35 +128,6 @@ const WalletButtonsComponent: React.FC<{
                 onClick={handleDeleteClick}
             >
                 Eliminar
-            </Button>
-            <Button
-                variant="contained"
-                style={{
-                    borderRadius: '20px',
-                    backgroundColor: isItemSelected ? '#3f51b5' : '#b0b0b0',
-                    color: 'white',
-                    fontSize: '14px',
-                    padding: '10px',
-                    margin: '8px',
-                }}
-                startIcon={<EditIcon />}
-                disabled={!isItemSelected}
-            >
-                Editar
-            </Button>
-            <Button
-                variant="contained"
-                style={{
-                    borderRadius: '20px',
-                    backgroundColor: '#3f51b5',
-                    color: 'white',
-                    fontSize: '14px',
-                    padding: '10px',
-                    margin: '8px',
-                }}
-                startIcon={<FilterListIcon />}
-            >
-                Filtrar
             </Button>
             <Button
                 variant="contained"

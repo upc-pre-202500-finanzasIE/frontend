@@ -96,21 +96,7 @@ const LettersButtonsComponent: React.FC<{
             >
                 Eliminar
             </Button>
-            <Button
-                variant="contained"
-                style={{
-                    borderRadius: '20px',
-                    backgroundColor: isItemSelected ? '#3f51b5' : '#b0b0b0',
-                    color: 'white',
-                    fontSize: '14px',
-                    padding: '10px',
-                    margin: '8px',
-                }}
-                startIcon={<EditIcon />}
-                disabled={!isItemSelected}
-            >
-                Editar
-            </Button>
+
             <Button
                 variant="contained"
                 style={{
@@ -127,20 +113,7 @@ const LettersButtonsComponent: React.FC<{
             >
                 Ver Detalles
             </Button>
-            <Button
-                variant="contained"
-                style={{
-                    borderRadius: '20px',
-                    backgroundColor: '#3f51b5',
-                    color: 'white',
-                    fontSize: '14px',
-                    padding: '10px',
-                    margin: '8px',
-                }}
-                startIcon={<FilterListIcon />}
-            >
-                Filtrar
-            </Button>
+
             <Modal
                 visible={isAddModalVisible}
                 onCancel={handleCancel}

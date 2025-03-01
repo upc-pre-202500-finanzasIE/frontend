@@ -61,12 +61,9 @@ export const updateWalletBankId = async (walletId: number, bankId: number) => {
     }
 };
 
-export const updateWalletValorNeto = async (walletId: number, gastosIniciales?: number, gastosFinales?: number) => {
+export const updateWalletValorNeto = async (walletId: number, gastosFinales?: number) => {
     try {
         const params = new URLSearchParams();
-        if (gastosIniciales !== undefined) {
-            params.append('gastosIniciales', gastosIniciales.toString());
-        }
         if (gastosFinales !== undefined) {
             params.append('gastosFinales', gastosFinales.toString());
         }

@@ -1,16 +1,17 @@
 import { Fragment, useEffect, useState } from "react";
+import { Route, Routes, useLocation } from "react-router-dom";
 import Main from "./main/Main";
-import { Route, Routes } from "react-router-dom";
 import LeftSidebar from "./public/pages/LeftSidebar.tsx";
 import WalletTable from "./wallets/pages/WalletTable.tsx";
-import SignIn from "./authentication/SingIn.tsx";
 import LetterTable from "./wallets/pages/LettersTable.tsx";
 import BankTable from "./wallets/pages/BankTable.tsx";
+import ProtectedRoute from "./ProtectedRoute.tsx";
+import SignInPage from "./wallets/components/SignInPage.tsx";
 
 const App = () => {
-    const [isLeftSidebarCollapsed, setIsLeftSidebarCollapsed] =
-        useState<boolean>(false);
+    const [isLeftSidebarCollapsed, setIsLeftSidebarCollapsed] = useState<boolean>(false);
     const [screenWidth, setScreenWidth] = useState<number>(window.innerWidth);
+    const location = useLocation(); // 🔹 Obtiene la ruta actual
 
     useEffect(() => {
         const updateSize = () => {
@@ -26,13 +27,17 @@ const App = () => {
 
     return (
         <Fragment>
-            <LeftSidebar
-                isLeftSidebarCollapsed={isLeftSidebarCollapsed}
-                changeIsLeftSidebarCollapsed={(value) =>
-                    setIsLeftSidebarCollapsed(value)
-                }
-            />
+            {location.pathname !== "/" && (
+                <LeftSidebar
+                    isLeftSidebarCollapsed={isLeftSidebarCollapsed}
+                    changeIsLeftSidebarCollapsed={(value) =>
+                        setIsLeftSidebarCollapsed(value)
+                    }
+                />
+            )}
+
             <Routes>
+                <Route path="/" element={<SignInPage />} />
                 <Route
                     element={
                         <Main
@@ -41,11 +46,9 @@ const App = () => {
                         />
                     }
                 >
-                    <Route path="" element={<SignIn />} />
-                    <Route path="/wallets" element={<WalletTable/>} />
-                    <Route path="/letters" element={< LetterTable/>} />
-                    <Route path="/banks" element={< BankTable/>} />
-
+                    <Route path="/wallets" element={<ProtectedRoute element={<WalletTable />} />} />
+                    <Route path="/letters" element={<ProtectedRoute element={<LetterTable />} />} />
+                    <Route path="/banks" element={<ProtectedRoute element={<BankTable />} />} />
                 </Route>
             </Routes>
         </Fragment>

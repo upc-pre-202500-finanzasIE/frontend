@@ -99,7 +99,13 @@ const WalletDetailsModal: React.FC<WalletDetailsModalProps> = ({ visible, onCanc
         { title: 'Fecha de Vencimiento', dataIndex: 'fechaVencimiento', key: 'fechaVencimiento', width: 150 },
         { title: 'Valor Nominal', dataIndex: 'valorNominal', key: 'valorNominal', width: 150 },
         { title: 'Plazo', dataIndex: 'plazo', key: 'plazo', width: 100 },
-        { title: 'Tipo de Moneda', dataIndex: 'tipoMoneda', key: 'tipoMoneda', width: 150 },
+        {
+            title: 'Tipo de Moneda',
+            dataIndex: 'tipoMoneda',
+            key: 'tipoMoneda',
+            width: 150,
+            render: (_: any, record: Letter) => record.soles ? 'Soles' : 'Dolares'
+        },
         { title: 'Estado', dataIndex: 'estado', key: 'estado', width: 150 },
         {
             title: 'Tasa Efectiva por Días',
@@ -140,7 +146,7 @@ const WalletDetailsModal: React.FC<WalletDetailsModalProps> = ({ visible, onCanc
                         <div><strong>Información del banco</strong></div>
                         <div>Nombre del Banco: {bankDetails.nombreBanco}</div>
                         <div>
-                            La tasa ofrecida por la institución financiera es de {bankDetails.tasaDeInteres} y es {bankDetails.efectiva ? 'Efectiva' : 'Nominal'}
+                            La tasa ofrecida por la institución financiera es de {bankDetails.tasaDeInteres}% y es {bankDetails.efectiva ? 'Efectiva' : 'Nominal'}
                         </div>
                     </div>
                 )}

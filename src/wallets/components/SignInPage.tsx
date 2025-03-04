@@ -34,7 +34,7 @@ const SignInPage: React.FC = () => {
                 <h2>Finance You</h2>
                 <form>
                     <div className="signin-form-group">
-                        <label>User Name:</label>
+                        <label>Usuario:</label>
                         <input
                             type="text"
                             value={userName}
@@ -42,7 +42,7 @@ const SignInPage: React.FC = () => {
                         />
                     </div>
                     <div className="signin-form-group">
-                        <label>Password:</label>
+                        <label>Contraseña:</label>
                         <input
                             type="password"
                             value={password}

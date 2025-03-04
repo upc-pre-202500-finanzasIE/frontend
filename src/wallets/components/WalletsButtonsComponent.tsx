@@ -82,7 +82,7 @@ const WalletButtonsComponent: React.FC<{
     const handleUpdateValuesClick = async () => {
         if (selectedWalletId) {
             try {
-                await updateWalletValorNeto(selectedWalletId, 0);
+                await updateWalletValorNeto(selectedWalletId);
                 toast.success("Valores de cartera actualizados", { position: "top-right", autoClose: 3000 });
                 onFormSubmit();
             } catch (error) {

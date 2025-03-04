@@ -136,7 +136,7 @@ const CreateBankForm: React.FC<{ onCancel: () => void; onFormSubmit: () => void;
                                 disabled={readOnly}
                             />
                         </Form.Item>
-                        <Form.Item name={["gastosIniciales", "comisionPagoInicial"]} label="Comisión por Pago Inicial" rules={[{ required: true, message: "Ingrese la comisión por pago inicial" }]}>
+                        <Form.Item name={["gastosIniciales", "comisionPagoInicial"]} label="Costo por letra" rules={[{ required: true, message: "Ingrese la comisión por pago inicial" }]}>
                             <InputNumber style={{ width: "100%" }} disabled={readOnly} />
                         </Form.Item>
                         <Form.Item name={["gastosIniciales", "interesesLetrasFacturas"]} label="Intereses por Letras/Facturas" rules={[{ required: true, message: "Ingrese los intereses por letras/facturas" }]}>

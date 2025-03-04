@@ -18,6 +18,7 @@ interface DataType {
     valorRecibido: number;
     tipoDeCartera: string;
     bank: number | null;
+    tceaConjunta: number;
 }
 
 const WalletTable = () => {
@@ -36,6 +37,8 @@ const WalletTable = () => {
             const formattedData = wallets.map((wallet: any) => {
                 const walletLetters = letters.filter((letter: any) => letter.walletId === wallet.id);
 
+                console.log('TCEA Conjunta:', wallet.tceaConjunta);
+
                 return {
                     key: wallet.id,
                     id: wallet.id,
@@ -46,7 +49,8 @@ const WalletTable = () => {
                     valorEntregado: wallet.valorEntregado,
                     valorRecibido: wallet.valorRecibido,
                     tipoDeCartera: wallet.tipoDeCartera,
-                    bank: wallet.bank
+                    bank: wallet.bank,
+                    tceaConjunta: wallet.tceaConjunta
                 };
             });
 
@@ -55,7 +59,6 @@ const WalletTable = () => {
             toast.error("Error al cargar los datos.");
         }
     };
-
     useEffect(() => {
         fetchData();
     }, []);
@@ -96,6 +99,13 @@ const WalletTable = () => {
         { title: "Valor Neto", dataIndex: "valorNeto", key: "valorNeto", width: 150 },
         { title: "Valor Entregado", dataIndex: "valorEntregado", key: "valorEntregado", width: 150 },
         { title: "Valor Recibido", dataIndex: "valorRecibido", key: "valorRecibido", width: 150 },
+        {
+            title: "TCEA (Tasa de costo efectiva anual)",
+            dataIndex: "tceaConjunta",
+            key: "tceaConjunta",
+            width: 200,
+            render: (text: number | null) => text !== null ? `${text * 100}%` : 'N/A'
+        }
     ];
 
     const handlePageSizeChange = (current: number, size: number) => {

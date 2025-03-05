@@ -7,6 +7,7 @@ import LetterTable from "./wallets/pages/LettersTable.tsx";
 import BankTable from "./wallets/pages/BankTable.tsx";
 import ProtectedRoute from "./ProtectedRoute.tsx";
 import SignInPage from "./wallets/components/SignInPage.tsx";
+import AboutTheApp from "./wallets/forms/AboutTheApp.tsx";
 
 const App = () => {
     const [isLeftSidebarCollapsed, setIsLeftSidebarCollapsed] = useState<boolean>(false);
@@ -49,6 +50,7 @@ const App = () => {
                     <Route path="/wallets" element={<ProtectedRoute element={<WalletTable />} />} />
                     <Route path="/letters" element={<ProtectedRoute element={<LetterTable />} />} />
                     <Route path="/banks" element={<ProtectedRoute element={<BankTable />} />} />
+                    <Route path="/about-app" element={<ProtectedRoute element={<AboutTheApp/>} />} />
                 </Route>
             </Routes>
         </Fragment>

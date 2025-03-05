@@ -20,6 +20,7 @@ interface Letter {
     tasaEfectivaPorDias: number;
     plazoDiasDescuento: number;
     valorTasaDescontada: number;
+    valorNetoGastosIniciales: number;
 }
 
 interface WalletDetailsModalProps {
@@ -115,7 +116,8 @@ const WalletDetailsModal: React.FC<WalletDetailsModalProps> = ({ visible, onCanc
             render: (value: number) => `${(value * 100).toFixed(2)}%`
         },
         { title: 'Plazo Días Descuento', dataIndex: 'plazoDiasDescuento', key: 'plazoDiasDescuento', width: 150 },
-        { title: 'Valor Tasa Descontada', dataIndex: 'valorTasaDescontada', key: 'valorTasaDescontada', width: 150 },
+        { title: 'Valor Tasa Descontada(Gastos Iniciales)', dataIndex: 'valorNetoGastosIniciales', key: 'valorNetoGastosIniciales', width: 150 },
+        { title: 'Valor Tasa Descontada(Sin gastos iniciales)', dataIndex: 'valorTasaDescontada', key: 'valorTasaDescontada', width: 150 },
     ];
 
     return (

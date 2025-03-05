@@ -1,8 +1,10 @@
+// src/wallets/forms/AssociatingWalletBankForm.tsx
 import React, { useState, useEffect } from "react";
 import { Form, Button, Modal, Table } from "antd";
 import { toast } from "react-toastify";
 import { getBankByTipoMoneda, getAllBanks } from "../services/BanksService";
 import { getAllWallets, updateWalletBankId } from "../services/WalletService";
+import BankDetailsFromAssociatingModal from "./BankDetailsFromAssociatingModal";
 
 interface AssociatingWalletBankFormProps {
     visible: boolean;
@@ -15,7 +17,9 @@ const AssociatingWalletBankForm: React.FC<AssociatingWalletBankFormProps> = ({ v
     const [banks, setBanks] = useState([]);
     const [selectedRowKeys, setSelectedRowKeys] = useState<number[]>([]);
     const [selectedBankId, setSelectedBankId] = useState<number | null>(null);
+    const [selectedBank, setSelectedBank] = useState<any | null>(null);
     const [isBankSelected, setIsBankSelected] = useState(false);
+    const [isExpensesModalVisible, setIsExpensesModalVisible] = useState(false);
 
     useEffect(() => {
         const fetchBanks = async () => {
@@ -38,6 +42,12 @@ const AssociatingWalletBankForm: React.FC<AssociatingWalletBankFormProps> = ({ v
         }
     };
 
+    const handleShowExpenses = () => {
+        if (selectedBank) {
+            setIsExpensesModalVisible(true);
+        }
+    };
+
     const rowSelection = {
         selectedRowKeys,
         onChange: (selectedKeys: React.Key[], selectedRows: any[]) => {
@@ -50,6 +60,7 @@ const AssociatingWalletBankForm: React.FC<AssociatingWalletBankFormProps> = ({ v
             }
             setSelectedRowKeys(selectedKeys as number[]);
             setSelectedBankId(selectedRows.length > 0 ? selectedRows[0].id : null);
+            setSelectedBank(selectedRows.length > 0 ? selectedRows[0] : null);
             setIsBankSelected(selectedKeys.length > 0);
         },
         type: "checkbox",
@@ -81,25 +92,37 @@ const AssociatingWalletBankForm: React.FC<AssociatingWalletBankFormProps> = ({ v
     ];
 
     return (
-        <Modal visible={visible} onCancel={onCancel} footer={null} title={`Usted está asociando su cartera de tipo ${wallet.tipoDeCartera} llamada ${wallet.nombre}`}>
-            <Form layout="vertical" onFinish={handleSubmit}>
-                <Form.Item label="Seleccione el banco" required>
-                    <Table
-                        rowKey="id"
-                        rowSelection={rowSelection}
-                        columns={columns}
-                        dataSource={banks}
-                        pagination={false}
-                        scroll={{ y: 240 }}
-                    />
-                </Form.Item>
-                <Form.Item>
-                    <Button type="primary" htmlType="submit" disabled={!isBankSelected}>
-                        Asociar
-                    </Button>
-                </Form.Item>
-            </Form>
-        </Modal>
+        <>
+            <Modal visible={visible} onCancel={onCancel} footer={null} title={`Usted está asociando su cartera de tipo ${wallet.tipoDeCartera} llamada ${wallet.nombre}`}>
+                <Form layout="vertical" onFinish={handleSubmit}>
+                    <Form.Item label="Seleccione el banco" required>
+                        <Table
+                            rowKey="id"
+                            rowSelection={rowSelection}
+                            columns={columns}
+                            dataSource={banks}
+                            pagination={false}
+                            scroll={{ y: 240 }}
+                        />
+                    </Form.Item>
+                    <Form.Item>
+                        <Button type="primary" htmlType="submit" disabled={!isBankSelected}>
+                            Asociar
+                        </Button>
+                        <Button type="default" onClick={handleShowExpenses} disabled={!isBankSelected}>
+                            Mostrar Gastos
+                        </Button>
+                    </Form.Item>
+                </Form>
+            </Modal>
+            {selectedBank && (
+                <BankDetailsFromAssociatingModal
+                    visible={isExpensesModalVisible}
+                    onClose={() => setIsExpensesModalVisible(false)}
+                    bank={selectedBank}
+                />
+            )}
+        </>
     );
 };
 
